@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>i love you more</title>
+  <style>
+    :root{
+      --bg1: #ffb7c5;
+      --bg2: #ff8fb3;
+      --accent1: #ff7aa6;
+      --accent2: #ff4f8a;
+      --muted: #7f2b4a;
+      --white-90: rgba(255,255,255,0.95);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    html,body{height:100%;}
+    body{
+      margin:0;
+      background: radial-gradient(circle at 50% 30%, var(--bg1) 0%, var(--bg2) 30%, #ff6fa4 55%, #392040 100%);
+      color: #2b1020;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+    }
+
+    /* full-screen card (centred content) */
+    .card{
+      position:fixed;inset:0;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      padding:2.5rem;box-sizing:border-box;
+      background:linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,240,250,0.86));
+      overflow:hidden;
+    }
+
+    /* heart vignette */
+    .vignette-heart{position:absolute;left:50%;top:28%;transform:translate(-50%,-30%);width:min(420px,60vw);height:auto;pointer-events:none;filter:blur(18px) saturate(1.05);opacity:0.95;}
+    .vignette-heart svg{width:100%;height:auto;display:block}
+
+    h1{margin:0 0 .25rem 0;font-weight:900;font-size:clamp(28px,5vw,48px);color:var(--muted);text-shadow:0 6px 18px rgba(255,150,190,0.18);z-index:2}
+    p.lead{margin:0 0 1.25rem 0;color:var(--muted);font-weight:700;font-size:clamp(14px,2.2vw,18px);z-index:2}
+
+    .buttons{z-index:2;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+    button{padding:.8rem 1.4rem;border-radius:12px;border:0;cursor:pointer;font-weight:800;font-size:1rem;backdrop-filter: blur(6px);transition:transform .15s ease,box-shadow .15s ease}
+    button:active{transform:translateY(1px)}
+    .yes{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:white;box-shadow:0 12px 36px rgba(255,110,160,0.18)}
+    .yes:hover{transform:translateY(-6px) scale(1.02)}
+    .no{background:linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,240,250,0.7));border:1px solid rgba(255,200,220,0.45);color:var(--muted)}
+
+    /* overlays */
+    .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transform:translateY(6%) scale(.98);transition:all .28s cubic-bezier(.2,.9,.18,1);z-index:8}
+    .overlay.show{opacity:1;transform:none;pointer-events:auto}
+    .overlay .panel{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;box-sizing:border-box}
+    .overlay h2{margin:0;font-size:clamp(24px,6vw,56px);color:var(--white-90);text-align:center}
+    .overlay p{margin-top:.6rem;color:var(--white-90);font-weight:700;font-size:clamp(14px,2.2vw,20px);text-align:center}
+
+    .overlay.yay .panel{background:linear-gradient(180deg, rgba(255,110,160,0.95), rgba(255,80,140,0.92));}
+    .overlay.wrong .panel{background:linear-gradient(180deg, rgba(140,20,40,0.95), rgba(190,30,60,0.94));}
+
+    .big-heart{width:min(200px,28vw);height:auto;margin-bottom:1rem;filter:drop-shadow(0 8px 28px rgba(255,120,160,0.28));}
+    .pulse{animation:pulse 900ms ease-in-out infinite alternate}
+    @keyframes pulse{from{transform:scale(1)}to{transform:scale(1.06)}}
+
+    /* confetti container covers whole viewport */
+    .confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:9999}
+    .confetti .shard{position:absolute;will-change:transform,opacity;background:transparent}
+    .confetti .shard::before{content:'';display:block;width:100%;height:100%;background:inherit;border-radius:2px}
+    .confetti span{position:absolute;width:10px;height:16px;opacity:0.95;will-change:transform,opacity;border-radius:2px;animation:fall linear forwards}
+    @keyframes fall{0%{transform: translateY(-10vh) rotate(0deg) scale(1);opacity:1}100%{transform: translateY(120vh) rotate(540deg) scale(.9);opacity:0}}
+
+    /* heart particle */
+    .heart{position:absolute;width:18px;height:18px;transform:rotate(-45deg);transform-origin:center;will-change:transform,opacity;animation:floatUp linear forwards;opacity:0.95;border-radius:3px}
+    .heart::before,.heart::after{content:'';position:absolute;width:18px;height:18px;border-radius:50%;top:-9px;left:0;background:inherit}
+    .heart::after{left:9px}
+    @keyframes floatUp{0%{transform:translateY(0) rotate(-45deg) scale(1);opacity:1}30%{opacity:1}100%{transform:translateY(-120vh) rotate(60deg) scale(1.1);opacity:0}}
+
+    /* responsive */
+    @media (max-width:420px){
+      .vignette-heart{top:24%}
+      .buttons{gap:.6rem}
+      button{padding:.7rem 1rem;border-radius:10px;font-size:.95rem}
+      .heart{width:12px;height:12px}
+      .heart::before,.heart::after{width:12px;height:12px;top:-6px}
+    }
+
+    /* small utility */
+    .visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
+  </style>
+</head>
+<body>
+  <div class="confetti" id="confetti" aria-hidden="true"></div>
+  <main class="card" role="main">
+    <h1>i love you more</h1>
+    <p class="lead">Tap a button — let's settle who hoards more heartbeats. Ready for fireworks?</p>
+
+    <div class="vignette-heart" aria-hidden="true">
+      <svg viewBox="0 0 32 29" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M23.6 0C20.4 0 18 1.9 16 4.1 14 1.9 11.6 0 8.4 0 3.6 0 0 3.8 0 8.6c0 6.7 9.8 12.9 16 20.4 6.2-7.5 16-13.7 16-20.4C32 3.8 28.4 0 23.6 0z" fill="rgba(255,150,200,0.85)"/></svg>
+    </div>
+
+    <div class="buttons" aria-hidden="false">
+      <button class="yes" id="yesBtn">yes you love me more</button>
+      <button class="no" id="noBtn">no i love you more</button>
+    </div>
+
+    <div class="overlay" id="overlay" aria-hidden="true">
+      <div class="panel" role="dialog" aria-live="polite">
+        <svg class="big-heart pulse" viewBox="0 0 32 29" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M23.6 0C20.4 0 18 1.9 16 4.1 14 1.9 11.6 0 8.4 0 3.6 0 0 3.8 0 8.6c0 6.7 9.8 12.9 16 20.4 6.2-7.5 16-13.7 16-20.4C32 3.8 28.4 0 23.6 0z" fill="white"/></svg>
+        <h2 id="overlayTitle"></h2>
+        <p id="overlayText"></p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (function(){
+      const yesBtn = document.getElementById('yesBtn');
+      const noBtn = document.getElementById('noBtn');
+      const overlay = document.getElementById('overlay');
+      const overlayTitle = document.getElementById('overlayTitle');
+      const overlayText = document.getElementById('overlayText');
+      const confetti = document.getElementById('confetti');
+      const card = document.querySelector('.card');
+
+      function resetToStart(){
+        overlay.classList.remove('show','yay','wrong');
+        overlay.setAttribute('aria-hidden','true');
+        confetti.innerHTML = '';
+        confetti.setAttribute('aria-hidden','true');
+        if(card) card.classList.remove('dimmed','fade');
+      }
+
+      function isMobile(){
+        return window.innerWidth <= 420 || window.matchMedia('(pointer:coarse)').matches;
+      }
+
+      function applyDim(){
+        if(!card) return;
+        // add classes that handle blur + fade; keep transitions smooth
+        card.classList.add('fade');
+        // allow layout to settle then apply stronger blur for transition feel
+        requestAnimationFrame(()=>{ card.classList.add('dimmed'); });
+      }
+
+      function removeDim(){
+        if(!card) return;
+        card.classList.remove('dimmed');
+        // remove fade slightly after to avoid abrupt jump
+        setTimeout(()=>{ card.classList.remove('fade'); }, 260);
+      }
+
+      function generateConfetti(pieces, colours){
+        confetti.innerHTML = '';
+        const useHearts = true;
+        const max = Math.max(20, Math.round(pieces));
+        for(let i=0;i<max;i++){
+          if(Math.random() < 0.42 && useHearts){
+            createHeart(colours[Math.floor(Math.random()*colours.length)]);
+          } else {
+            createShard(colours[Math.floor(Math.random()*colours.length)]);
+          }
+        }
+        confetti.setAttribute('aria-hidden','false');
+      }
+
+      function createShard(color){
+        const el = document.createElement('span');
+        const left = Math.random()*100;
+        const delay = Math.random()*0.6;
+        const dur = 1.6 + Math.random()*2.0;
+        const rot = Math.random()*360;
+        const w = Math.round((6 + Math.random()*12));
+        const h = Math.round((10 + Math.random()*18));
+        el.style.left = left + '%';
+        el.style.background = color;
+        el.style.top = (Math.random()*20 - 20) + 'vh';
+        el.style.transform = `rotate(${rot}deg)`;
+        el.style.width = w + 'px';
+        el.style.height = h + 'px';
+        el.style.animationDuration = dur + 's';
+        el.style.animationDelay = delay + 's';
+        el.style.borderRadius = (Math.random()>0.6)?'2px':'0px';
+        el.style.opacity = 0.95;
+        el.style.position = 'absolute';
+        el.style.willChange = 'transform,opacity';
+        el.className = 'shard';
+        confetti.appendChild(el);
+      }
+
+      function createHeart(color){
+        const el = document.createElement('div');
+        el.className = 'heart';
+        const left = Math.random()*100;
+        const delay = Math.random()*0.8;
+        const dur = 2 + Math.random()*2.6;
+        el.style.left = left + '%';
+        el.style.top = (80 + Math.random()*20) + '%';
+        el.style.background = color;
+        el.style.animationDuration = dur + 's';
+        el.style.animationDelay = delay + 's';
+        el.style.animationTimingFunction = 'cubic-bezier(.2,.8,.2,1)';
+        el.style.transform = `rotate(-45deg) scale(${0.7 + Math.random()*1.2})`;
+        confetti.appendChild(el);
+      }
+
+      function showWrong(){
+        overlayTitle.textContent = 'Oops — not quite!';
+        overlayText.textContent = "Nope, that's incorrect. Try again — I'll forgive you with a wink.";
+        overlay.classList.remove('yay');
+        overlay.classList.add('show','wrong');
+        overlay.setAttribute('aria-hidden','false');
+
+        applyDim();
+
+        const pieces = isMobile()?40:100;
+        generateConfetti(pieces,['#ff6b6b','#ff4f6f','#ff9aa8','#ffd1d9']);
+
+        setTimeout(()=>{
+          const panel = overlay.querySelector('.panel');
+          if(panel){
+            panel.style.transition = 'transform .12s ease';
+            panel.style.transform = 'translateX(-10px)';
+            setTimeout(()=>{panel.style.transform = 'translateX(10px)';setTimeout(()=>{panel.style.transform='translateX(0)';},80);},80);
+          }
+        },120);
+
+        setTimeout(()=>{resetToStart();},1800);
+      }
+
+      function celebrate(){
+        overlayTitle.textContent = 'YAY — you win my heart!';
+        overlayText.textContent = 'That’s it! You love me more and the universe approves. Big love, infinite confetti.';
+        overlay.classList.remove('wrong');
+        overlay.classList.add('show','yay');
+        overlay.setAttribute('aria-hidden','false');
+
+        applyDim();
+
+        const pieces = isMobile()?120:400;
+        generateConfetti(pieces,['#FF6B6B','#FFD166','#06D6A0','#FF9AC8','#C77DFF','#FFB3C6']);
+      }
+
+      yesBtn.addEventListener('click',celebrate);
+      noBtn.addEventListener('click',showWrong);
+
+      overlay.addEventListener('click',resetToStart);
+
+      [yesBtn,noBtn].forEach(btn=>{
+        btn.addEventListener('keyup',(e)=>{if(e.key==='Enter'||e.key===' ') btn.click();});
+      });
+
+      // keep things tidy if tab/window closes
+      window.addEventListener('blur',()=>{resetToStart();});
+
+    })();
+  </script>
+</body>
+</html>
