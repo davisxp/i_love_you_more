@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>i love you more</title>
+  <title>I love you more</title>
   <style>
     :root{
       --bg1: #ffb7c5;
@@ -23,7 +23,6 @@
       text-rendering:optimizeLegibility;
     }
 
-    /* full-screen card (centred content) */
     .card{
       position:fixed;inset:0;
       display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -32,7 +31,6 @@
       overflow:hidden;
     }
 
-    /* heart vignette */
     .vignette-heart{position:absolute;left:50%;top:28%;transform:translate(-50%,-30%);width:min(420px,60vw);height:auto;pointer-events:none;filter:blur(18px) saturate(1.05);opacity:0.95;}
     .vignette-heart svg{width:100%;height:auto;display:block}
 
@@ -46,7 +44,6 @@
     .yes:hover{transform:translateY(-6px) scale(1.02)}
     .no{background:linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,240,250,0.7));border:1px solid rgba(255,200,220,0.45);color:var(--muted)}
 
-    /* overlays */
     .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transform:translateY(6%) scale(.98);transition:all .28s cubic-bezier(.2,.9,.18,1);z-index:8}
     .overlay.show{opacity:1;transform:none;pointer-events:auto}
     .overlay .panel{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;box-sizing:border-box}
@@ -60,20 +57,17 @@
     .pulse{animation:pulse 900ms ease-in-out infinite alternate}
     @keyframes pulse{from{transform:scale(1)}to{transform:scale(1.06)}}
 
-    /* confetti container covers whole viewport */
     .confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:9999}
     .confetti .shard{position:absolute;will-change:transform,opacity;background:transparent}
     .confetti .shard::before{content:'';display:block;width:100%;height:100%;background:inherit;border-radius:2px}
     .confetti span{position:absolute;width:10px;height:16px;opacity:0.95;will-change:transform,opacity;border-radius:2px;animation:fall linear forwards}
     @keyframes fall{0%{transform: translateY(-10vh) rotate(0deg) scale(1);opacity:1}100%{transform: translateY(120vh) rotate(540deg) scale(.9);opacity:0}}
 
-    /* heart particle */
     .heart{position:absolute;width:18px;height:18px;transform:rotate(-45deg);transform-origin:center;will-change:transform,opacity;animation:floatUp linear forwards;opacity:0.95;border-radius:3px}
     .heart::before,.heart::after{content:'';position:absolute;width:18px;height:18px;border-radius:50%;top:-9px;left:0;background:inherit}
     .heart::after{left:9px}
     @keyframes floatUp{0%{transform:translateY(0) rotate(-45deg) scale(1);opacity:1}30%{opacity:1}100%{transform:translateY(-120vh) rotate(60deg) scale(1.1);opacity:0}}
 
-    /* responsive */
     @media (max-width:420px){
       .vignette-heart{top:24%}
       .buttons{gap:.6rem}
@@ -82,23 +76,22 @@
       .heart::before,.heart::after{width:12px;height:12px;top:-6px}
     }
 
-    /* small utility */
     .visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
   </style>
 </head>
 <body>
   <div class="confetti" id="confetti" aria-hidden="true"></div>
   <main class="card" role="main">
-    <h1>i love you more</h1>
-    <p class="lead">Tap a button — let's settle who hoards more heartbeats. Ready for fireworks?</p>
+    <h1>I love you more</h1>
+    <p class="lead">I Love You More — Press a Button Below to Prove it.</p>
 
     <div class="vignette-heart" aria-hidden="true">
       <svg viewBox="0 0 32 29" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M23.6 0C20.4 0 18 1.9 16 4.1 14 1.9 11.6 0 8.4 0 3.6 0 0 3.8 0 8.6c0 6.7 9.8 12.9 16 20.4 6.2-7.5 16-13.7 16-20.4C32 3.8 28.4 0 23.6 0z" fill="rgba(255,150,200,0.85)"/></svg>
     </div>
 
     <div class="buttons" aria-hidden="false">
-      <button class="yes" id="yesBtn">yes you love me more</button>
-      <button class="no" id="noBtn">no i love you more</button>
+      <button class="yes" id="yesBtn">Yes. You love me more</button>
+      <button class="no" id="noBtn">No. I love you more</button>
     </div>
 
     <div class="overlay" id="overlay" aria-hidden="true">
@@ -202,8 +195,8 @@
       }
 
       function showWrong(){
-        overlayTitle.textContent = 'Oops — not quite!';
-        overlayText.textContent = "Nope, that's incorrect. Try again — I'll forgive you with a wink.";
+        overlayTitle.textContent = 'Good try but not quite right!';
+        overlayText.textContent = "Try again, you know you know the correct answer really.";
         overlay.classList.remove('yay');
         overlay.classList.add('show','wrong');
         overlay.setAttribute('aria-hidden','false');
@@ -226,8 +219,8 @@
       }
 
       function celebrate(){
-        overlayTitle.textContent = 'YAY — you win my heart!';
-        overlayText.textContent = 'That’s it! You love me more and the universe approves. Big love, infinite confetti.';
+        overlayTitle.textContent = 'YAY. Good Correct, I love you more and you have won my heart!';
+        overlayText.textContent = 'Correct! I love you more than anything in the world ever, all the love, big confetti and all that.';
         overlay.classList.remove('wrong');
         overlay.classList.add('show','yay');
         overlay.setAttribute('aria-hidden','false');
@@ -247,7 +240,6 @@
         btn.addEventListener('keyup',(e)=>{if(e.key==='Enter'||e.key===' ') btn.click();});
       });
 
-      // keep things tidy if tab/window closes
       window.addEventListener('blur',()=>{resetToStart();});
 
     })();
